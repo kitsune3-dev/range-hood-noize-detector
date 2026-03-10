@@ -74,7 +74,7 @@ void loop() {
             g_consecutive_triggers = 0;
         }
 
-        if (g_consecutive_triggers > NOISE_SUSTAIN_COUNT) {
+        if (g_consecutive_triggers >= NOISE_SUSTAIN_COUNT) {
             if (wifi_manager_is_connected() && notification_can_send()) {
                 bool ok = notification_send(result.db_spl, g_config.threshold_db);
                 Serial.printf("[main] notification %s\n", ok ? "sent" : "failed");

@@ -104,7 +104,7 @@ AudioResult audio_measure() {
         int samples_in_buf = (int)(bytes_read / sizeof(int32_t));
         for (int i = 0; i < samples_in_buf && count < total_samples; i++, count++) {
             // INMP441 data is in the top 24 bits; shift down and normalise to [-1, 1].
-            float sample = (float)(dma_buf[i] >> 9) / (float)(1 << 23);
+            float sample = (float)(dma_buf[i] >> 8) / (float)(1 << 23);
             sum_sq += (double)(sample * sample);
             goertzel_process(goertzel, sample);
         }
