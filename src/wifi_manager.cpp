@@ -91,6 +91,22 @@ static void setup_portal_routes() {
         }
     );
 
+    // Device status endpoint — returns current config for diagnostics.
+    // NOTE: No authentication. This route MUST only be registered in AP mode
+    // (called exclusively from start_ap_portal()) to avoid leaking config on
+    // a shared LAN in STA mode.
+    s_server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest *request) {
+        AppConfig cfg;
+        storage_load(cfg);
+        JsonDocument doc;
+        doc["ssid"]            = cfg.wifi_ssid;
+        doc["threshold_db"]    = cfg.threshold_db;
+        doc["ifttt_key_set"]   = (cfg.ifttt_key[0] != '\0');  // presence only, not the key itself
+        String body;
+        serializeJson(doc, body);
+        request->send(200, "application/json", body);
+    });
+
     // Captive portal redirect for iOS/Android detection probes.
     s_server.onNotFound([](AsyncWebServerRequest *request) {
         request->redirect("http://" WIFI_AP_IP "/");
