@@ -91,6 +91,20 @@ static void setup_portal_routes() {
         }
     );
 
+    // Device status endpoint — returns current config for diagnostics.
+    // NOTE: No authentication; assumes closed AP network.
+    s_server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest *request) {
+        AppConfig cfg;
+        storage_load(cfg);
+        JsonDocument doc;
+        doc["ssid"]         = cfg.wifi_ssid;
+        doc["threshold_db"] = cfg.threshold_db;
+        doc["ifttt_key"]    = cfg.ifttt_key;  // returned in plaintext for debug
+        String body;
+        serializeJson(doc, body);
+        request->send(200, "application/json", body);
+    });
+
     // Captive portal redirect for iOS/Android detection probes.
     s_server.onNotFound([](AsyncWebServerRequest *request) {
         request->redirect("http://" WIFI_AP_IP "/");
