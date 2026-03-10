@@ -11,6 +11,7 @@ bool storage_load(AppConfig &dst) {
         dst.wifi_pass    = "";
         dst.ifttt_key    = "";
         dst.threshold_db = NOISE_DEFAULT_THRESHOLD;
+        prefs.end();
         return true;
     }
 
